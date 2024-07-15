@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const blogForm = document.getElementById('blogForm');
-    const blogList = document.getElementById('blogList');
+    // const blogList = document.getElementById('blogList');
     const cancelButton = document.getElementById('cancelButton');
 
     let editingBlogId = null;
