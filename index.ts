@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const blogsFilePath = path.join(__dirname, 'data/blogs.json');
+const blogsFilePath = path.join(__dirname, 'blogs.json');
 let blogs = [];
 
 // Load blogs from file if it exists
