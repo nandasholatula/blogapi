@@ -1,15 +1,28 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const blogsFilePath = path.join(__dirname, 'data/blogs.json');
 let blogs = [];
 
-// Serve the HTML file at /cobadulu
+// Load blogs from file if it exists
+if (fs.existsSync(blogsFilePath)) {
+    const blogsData = fs.readFileSync(blogsFilePath);
+    blogs = JSON.parse(blogsData);
+}
+
+// Save blogs to file
+function saveBlogsToFile() {
+    fs.writeFileSync(blogsFilePath, JSON.stringify(blogs, null, 2));
+}
+
+// Serve the HTML file at /backend
 app.get('/backend', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'inicobadulu.html'));
 });
@@ -20,6 +33,7 @@ app.post('/api/blogs', (req, res) => {
     const id = blogs.length + 1;
     const newBlog = { id, title, description, imageLink };
     blogs.push(newBlog);
+    saveBlogsToFile();
     res.status(201).json({ result: [newBlog] });
 });
 
@@ -47,6 +61,7 @@ app.put('/api/blogs/:id', (req, res) => {
     blog.title = title || blog.title;
     blog.description = description || blog.description;
     blog.imageLink = imageLink || blog.imageLink;
+    saveBlogsToFile();
     res.json({ result: [blog] });
 });
 
@@ -57,17 +72,18 @@ app.delete('/api/blogs/:id', (req, res) => {
         return res.status(404).send('Blog not found');
     }
     blogs.splice(blogIndex, 1);
+    saveBlogsToFile();
     res.status(204).send();
 });
 
 // Return 404 for home route
 app.get('/', (req, res) => {
-    res.status(200).send('Not Found');
+    res.status(404).send('Not Found');
 });
 
 // Return 404 for any undefined routes
 app.use((req, res, next) => {
-    res.status(200).send('Not Found');
+    res.status(404).send('Not Found');
 });
 
 app.listen(PORT, () => {
