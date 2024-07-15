@@ -37,7 +37,12 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
         <script>
-            CKEDITOR.replace('deskripsi');
+            const editors = document.querySelectorAll('.ckeditor');
+
+                // Loop through each element and initialize CKEditor
+                editors.forEach((editor) => {
+                    CKEDITOR.replace(editor);
+                });
         </script>
 </body>
 
