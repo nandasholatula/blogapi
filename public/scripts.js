@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+    CKEDITOR.replace('description');
+
     const blogForm = document.getElementById('blogForm');
-    // const blogList = document.getElementById('blogList');
     const cancelButton = document.getElementById('cancelButton');
 
     let editingBlogId = null;
@@ -17,12 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
         blogs.forEach(blog => {
             const li = document.createElement('li');
             li.innerHTML = `
-        <h3>${blog.title}</h3>
-        <p>${blog.description}</p>
-        <img src="${blog.imageLink}" alt="${blog.title}" width="100">
-        <button class="edit" data-id="${blog.id}">Edit</button>
-        <button class="delete" data-id="${blog.id}">Delete</button>
-      `;
+                        <h3>${blog.title}</h3>
+                        <p>${blog.description}</p>
+                        <img src="${blog.imageLink}" alt="${blog.title}" width="100">
+                        <button class="edit" data-id="${blog.id}">Edit</button>
+                        <button class="delete" data-id="${blog.id}">Delete</button>
+                    `;
             blogList.appendChild(li);
         });
         addEventListeners();
@@ -39,6 +40,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function handleFormSubmit(event) {
         event.preventDefault();
+
+        // Update the textarea with CKEditor content
+        for (let instance in CKEDITOR.instances) {
+            CKEDITOR.instances[instance].updateElement();
+        }
+
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
         const imageLink = document.getElementById('imageLink').value;

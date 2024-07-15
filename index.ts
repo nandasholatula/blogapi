@@ -11,15 +11,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 const blogsFilePath = path.join(__dirname, 'blogs.json');
 let blogs = [];
 
-// Load blogs from file if it exists
+// Load blogs from file if it exists and is not empty
 if (fs.existsSync(blogsFilePath)) {
-    const blogsData = fs.readFileSync(blogsFilePath);
-    blogs = JSON.parse(blogsData);
+    try {
+        const blogsData = fs.readFileSync(blogsFilePath, 'utf8');
+        if (blogsData) {
+            blogs = JSON.parse(blogsData);
+        }
+    } catch (err) {
+        console.error('Error reading or parsing blogs.json:', err);
+    }
 }
 
 // Save blogs to file
 function saveBlogsToFile() {
-    fs.writeFileSync(blogsFilePath, JSON.stringify(blogs, null, 2));
+    try {
+        fs.writeFileSync(blogsFilePath, JSON.stringify(blogs, null, 2));
+    } catch (err) {
+        console.error('Error writing to blogs.json:', err);
+    }
 }
 
 // Serve the HTML file at /backend
