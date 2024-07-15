@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backend Developer</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/42.0.1/ckeditor5.css">
 </head>
 
 <body>
@@ -19,7 +20,7 @@
             </div>
             <div>
                 <label for="description">Description:</label>
-                <textarea id="description" required></textarea>
+                <textarea id="description" name="deskripsi" class="ckeditor" required></textarea>
             </div>
             <div>
                 <label for="imageLink">Image Link:</label>
@@ -29,10 +30,34 @@
             <button type="button" id="cancelButton" style="display:none;">Cancel</button>
         </form>
     </div>
-    <h2>Blog Posts</h2>
-    <ul id="blogList"></ul>
+   
 
     <script src="scripts.js"></script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font
+        } from 'ckeditor5';
+
+        ClassicEditor
+            .create(document.querySelector('.editor'), {
+                plugins: [Essentials, Paragraph, Bold, Italic, Font],
+                toolbar: [
+                    'undo', 'redo', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+                ]
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 </body>
 
 </html>
