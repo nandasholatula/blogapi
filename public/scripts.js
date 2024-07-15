@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         blogForm.reset();
         cancelButton.style.display = 'none';
-        renderBlogs();
+        // renderBlogs();
     }
 
     async function handleEditClick(event) {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
         await fetch(`/api/blogs/${blogId}`, {
             method: 'DELETE',
         });
-        renderBlogs();
+        // renderBlogs();
     }
 
     function handleCancelClick() {
@@ -102,5 +102,5 @@ document.addEventListener('DOMContentLoaded', function () {
     blogForm.addEventListener('submit', handleFormSubmit);
     cancelButton.addEventListener('click', handleCancelClick);
 
-    renderBlogs();
+    // renderBlogs();
 });
