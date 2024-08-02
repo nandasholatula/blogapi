@@ -72,16 +72,30 @@ app.post('/api/blogs', (req, res) => {
 
 // Read All Blogs
 app.get('/api/blogs', (req, res) => {
-    res.json({ result: blogs });
+    axios.get('http://api.genbyz.my.id/read.php')
+        .then(response => {
+            res.json({ result: response.data.data });
+        })
+        .catch(error => {
+            console.error('Cek kembali:', error.message);
+            res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        });
 });
 
 // Read Single Blog by ID
 app.get('/api/blogs/:id', (req, res) => {
-    const blog = blogs.find(b => b.id === parseInt(req.params.id));
-    if (!blog) {
-        return res.status(404).send('Blog not found');
-    }
-    res.json({ result: [blog] });
+    axios.get('http://api.genbyz.my.id/read.php?id=${req.params.id}')
+        .then(response => {
+            if (response.data.status === 'success') {
+                res.json({ result: response.data.data });
+            } else {
+                res.status(404).json({ error: 'Blog not found' });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching blog from PHP script:', error.message);
+            res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        });
 });
 
 // Update Blog by ID
