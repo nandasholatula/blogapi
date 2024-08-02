@@ -100,27 +100,41 @@ app.get('/api/blogs/:id', (req, res) => {
 
 // Update Blog by ID
 app.put('/api/blogs/:id', (req, res) => {
-    const blog = blogs.find(b => b.id === parseInt(req.params.id));
-    if (!blog) {
-        return res.status(404).send('Blog not found');
-    }
-    const { title, description, imageLink } = req.body;
-    blog.title = title || blog.title;
-    blog.description = description || blog.description;
-    blog.imageLink = imageLink || blog.imageLink;
-    saveBlogsToFile();
-    res.json({ result: [blog] });
+   const { title, description, imageLink } = req.body;
+
+    axios.put('http://api.genbyz.my.id/update.php', {
+        id: req.params.id,
+        title: title,
+        description: description,
+        imageLink: imageLink
+    })
+    .then(response => {
+        if (response.data.status === 'success') {
+            res.json({ message: 'Blog updated successfully' });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error', details: response.data.message });
+        }
+    })
+    .catch(error => {
+        console.error('Error updating blog from PHP script:', error.message);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    });
 });
 
 // Delete Blog by ID
 app.delete('/api/blogs/:id', (req, res) => {
-    const blogIndex = blogs.findIndex(b => b.id === parseInt(req.params.id));
-    if (blogIndex === -1) {
-        return res.status(404).send('Blog not found');
-    }
-    blogs.splice(blogIndex, 1);
-    saveBlogsToFile();
-    res.status(204).send();
+     axios.delete('http://api.genbyz.my.id/delete.php', { data: { id: req.params.id } })
+    .then(response => {
+        if (response.data.status === 'success') {
+            res.status(204).send();
+        } else {
+            res.status(500).json({ error: 'Internal Server Error', details: response.data.message });
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting blog from PHP script:', error.message);
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    });
 });
 
 // Return 404 for home route
