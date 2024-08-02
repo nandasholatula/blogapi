@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const axios = require('axios');
+const PORT = process.env.PORT || 8081;
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -40,11 +41,33 @@ app.get('/backend', (req, res) => {
 // Create Blog
 app.post('/api/blogs', (req, res) => {
     const { title, description, imageLink } = req.body;
-    const id = blogs.length + 1;
-    const newBlog = { id, title, description, imageLink };
-    blogs.push(newBlog);
-    saveBlogsToFile();
-    res.status(201).json({ result: [newBlog] });
+
+    axios.post('http://api.genbyz.my.id/insert.php', new URLSearchParams({
+        title: title,
+        description: description,
+        imageLink: imageLink
+    }))
+    .then(response => {
+        const data = response.data;
+        if (data.status === 'success') {
+            res.status(201).json({ result: { id: data.id, title, description, imageLink } });
+        } else {
+            console.error('PHP script error:', data.message);
+            res.status(500).json({ error: 'Internal Server Error', details: data.message });
+        }
+    })
+    .catch(error => {
+        if (error.response) {
+            console.error('Response error:', error.response.data);
+            res.status(500).json({ error: 'Internal Server Error', details: error.response.data });
+        } else if (error.request) {
+            console.error('Request error:', error.request);
+            res.status(500).json({ error: 'Internal Server Error', details: 'No response received from PHP script' });
+        } else {
+            console.error('Unexpected error:', error.message);
+            res.status(500).json({ error: 'Internal Server Error', details: error.message });
+        }
+    });
 });
 
 // Read All Blogs
