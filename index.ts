@@ -5,7 +5,6 @@ const fs = require('fs');
 const app = express();
 const axios = require('axios');
 const PORT = process.env.PORT || 8081;
-const cors = require('cors');
 
 
 app.use(bodyParser.json());
@@ -13,9 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const blogsFilePath = path.join(__dirname, 'blogs.json');
 let blogs = [];
-app.use(cors({
-    origin: 'https://nandasholatula.github.io', // Allow only your domain
-}));
+
 // Load blogs from file if it exists and is not empty
 if (fs.existsSync(blogsFilePath)) {
     try {
