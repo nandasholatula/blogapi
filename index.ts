@@ -6,7 +6,6 @@ const app = express();
 const axios = require('axios');
 const PORT = process.env.PORT || 8081;
 
-
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
